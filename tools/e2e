@@ -1,0 +1,57 @@
+#!/bin/sh
+# Gate, checkup, README, tests, JS + native + Node.
+set -eu
+
+PKG=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+BEND="$PKG/tools/bend"
+TMP=$(mktemp -d)
+trap 'rm -rf "$TMP"' EXIT
+
+expect_line() {
+  label=$1
+  want=$2
+  shift 2
+  got=$("$@") || {
+    echo "e2e: $label exited $?" >&2
+    exit 1
+  }
+  printf '%s\n' "$got" | grep -Fqx "$want" || {
+    echo "e2e: $label expected '$want'" >&2
+    printf '%s\n' "$got" >&2
+    exit 1
+  }
+  echo "ok $label"
+}
+
+echo "== gate / checkup / layers =="
+"$PKG/tools/gate"
+"$BEND" "$PKG/package.bend" --checkup
+"$BEND" "$PKG/package.bend"
+if "$BEND" "$PKG/parse.bend" --checkup | grep -Ei 'codec|hex|base64|date|format'; then
+  echo "e2e: parse.bend checkup must not include codec or time" >&2
+  exit 1
+fi
+echo "ok parse_layer"
+if grep -Ei 'codec|time|hex|date' "$PKG/examples/readme.bend"; then
+  echo "e2e: parse example must import only parse.bend" >&2
+  exit 1
+fi
+echo "ok parse_example_isp"
+
+echo "== JS =="
+expect_line readme_js 2026 "$BEND" "$PKG/examples/readme.bend"
+expect_line parse_test_js ok "$BEND" "$PKG/tests/parse_test.bend"
+
+echo "== compile native / node =="
+"$BEND" "$PKG/examples/readme.bend" -o "$TMP/readme"
+"$BEND" "$PKG/tests/parse_test.bend" -o "$TMP/parse_test"
+"$BEND" "$PKG/tests/parse_test.bend" -o "$TMP/parse_test.js"
+
+echo "== native =="
+expect_line readme_native 2026 "$TMP/readme"
+expect_line parse_test_native ok "$TMP/parse_test"
+
+echo "== node =="
+expect_line parse_test_node ok node "$TMP/parse_test.js"
+
+echo "parse e2e ok"
