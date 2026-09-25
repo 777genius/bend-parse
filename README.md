@@ -4,13 +4,13 @@ Cursor, digits, and finish for [Bend 2](https://github.com/bendlang/bend). One f
 
 ## Install
 
-Hub name `bend-parse-lib@0.1.0.0` (the name must be ≥12 characters). Same tree as hash `0xe49a3e6521e1b71e55654a885f27bcc1`.
+Hub name `bend-scanner@0.1.0.0` (names must be ≥12 characters). Same tree as hash `0xe49a3e6521e1b71e55654a885f27bcc1`. `bend-parse-lib@0.1.0.0` is the same package.
 
 ```python
-import bend-parse-lib@0.1.0.0/parse.bend as P
+import bend-scanner@0.1.0.0/parse.bend as P
 ```
 
-[name](https://hub.bend-lang.com/n/bend-parse-lib) · [parse](https://hub.bend-lang.com/0xe49a3e6521e1b71e55654a885f27bcc1/parse.bend) · [manifest](https://hub.bend-lang.com/0xe49a3e6521e1b71e55654a885f27bcc1/manifest)
+[name](https://hub.bend-lang.com/n/bend-scanner) · [parse](https://hub.bend-lang.com/0xe49a3e6521e1b71e55654a885f27bcc1/parse.bend) · [manifest](https://hub.bend-lang.com/0xe49a3e6521e1b71e55654a885f27bcc1/manifest)
 
 This is v0.1.0. From this repo: `import ./parse.bend as P`. The hash still works: `import 0xe49a3e6521e1b71e55654a885f27bcc1/parse.bend as P`.
 
